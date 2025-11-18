@@ -10,23 +10,11 @@ pipeline {
             }
         }
 
-        stage('Crear entorno virtual') {
+        stage('Instalar dependencias (modo usuario)') {
             steps {
-                echo 'Creando entorno virtual Python...'
+                echo 'Instalando dependencias sin usar venv...'
                 sh '''
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    pip install --upgrade pip --break-system-packages
-                '''
-            }
-        }
-
-        stage('Instalar dependencias') {
-            steps {
-                echo 'Instalando dependencias dentro del entorno virtual...'
-                sh '''
-                    . venv/bin/activate
-                    pip install -r web/requirements.txt --break-system-packages
+                    pip3 install --user --break-system-packages -r web/requirements.txt
                 '''
             }
         }
@@ -35,8 +23,7 @@ pipeline {
             steps {
                 echo 'Ejecutando prueba de la aplicación Flask...'
                 sh '''
-                    . venv/bin/activate
-                    python web/app.py &
+                    python3 web/app.py &
                     sleep 5
                     echo "Aplicación ejecutada correctamente"
                 '''
@@ -50,3 +37,4 @@ pipeline {
         }
     }
 }
+
