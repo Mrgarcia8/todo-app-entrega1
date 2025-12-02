@@ -1,14 +1,21 @@
+# Imagen base de Python
 FROM python:3.11-slim
 
+# Crear directorio de la app
 WORKDIR /app
 
-ENV PYTHONUNBUFFERED=1
+# Copiar requerimientos desde la carpeta web
+COPY web/requirements.txt /app/requirements.txt
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Instalar dependencias
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-COPY . .
+# Copiar todo el contenido del proyecto
+COPY . /app
 
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--workers", "2"]
+# Exponer el puerto de Flask
+EXPOSE 5000
 
+# Comando para ejecutar la app
+CMD ["python", "web/app.py"]
 
