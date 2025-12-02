@@ -1,21 +1,20 @@
-# Imagen base de Python
+# Usa una imagen oficial de Python
 FROM python:3.11-slim
 
-# Crear directorio de la app
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar requerimientos desde la carpeta web
-COPY web/requirements.txt /app/requirements.txt
+# Copiar requirements desde la raíz del repositorio
+COPY requirements.txt .
 
 # Instalar dependencias
-RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar todo el contenido del proyecto
-COPY . /app
+# Copiar toda la aplicación (carpeta web)
+COPY web/ .
 
-# Exponer el puerto de Flask
+# Exponer el puerto donde corre Flask
 EXPOSE 5000
 
-# Comando para ejecutar la app
-CMD ["python", "web/app.py"]
-
+# Comando para ejecutar la aplicación
+CMD ["python", "app.py"]
