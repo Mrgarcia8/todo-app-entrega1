@@ -1,4 +1,4 @@
-name: CI - test, coverage, build & push
+name: CI - tests & coverage
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  test-and-coverage:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -16,49 +16,22 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r web/requirements.txt
-          pip install pytest coverage codecov
 
       - name: Run tests with coverage
         run: |
-          coverage run -m pytest
+          coverage run -m pytest -q
           coverage xml -i
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage.xml
-          token: ${{ secrets.CODECOV_TOKEN }} # si tu repositorio es público, token puede ser opcional
+          token: ${{ secrets.12345 }}   # si usas token; si tienes integración GitHub app, no hace falta
 
-  build-and-push-image:
-    needs: test-and-coverage
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./web/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-app:latest

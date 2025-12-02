@@ -1,15 +1,14 @@
-FROM python:3.9
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copiar requirements desde web
-COPY web/requirements.txt .
+ENV PYTHONUNBUFFERED=1
 
-# Instalar dependencias
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el código de la aplicación
-COPY web/. .
+COPY . .
 
-CMD ["python", "app.py"]
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--workers", "2"]
+
 
