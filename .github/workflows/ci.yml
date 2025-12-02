@@ -9,6 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -32,6 +33,4 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage.xml
-          token: ${{ secrets.12345 }}   # si usas token; si tienes integración GitHub app, no hace falta
-
-
+          token: ${{ secrets.CODECOV_TOKEN }}
